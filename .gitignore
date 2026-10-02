@@ -1,0 +1,38 @@
+# Папки Unity, которые не нужно загружать
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Файлы, создаваемые Visual Studio/Rider
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Системные файлы и логи
+*.log
+sysinfo.txt
+.DS_Store
+Thumbs.db
+
+# Сборки
+*.apk
+*.aab
+*.unitypackage
+*.app
