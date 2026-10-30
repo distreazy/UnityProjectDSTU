@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-    public Transform playerBody;
-    public Transform cameraPivot;
+    [Header("Ссылки")]
+    public Transform playerBody;   // Тело игрока (капсула)
+    public Transform cameraPivot;  // Пустой объект, внутри которого камера
 
+    [Header("Настройки чувствительности")]
     public float mouseSensitivity = 200f;
     public float minPitch = -80f;
     public float maxPitch = 80f;
@@ -13,25 +15,35 @@ public class MouseLook : MonoBehaviour
 
     void Start()
     {
-        // Прячем и блокируем курсор
+        // Прячем курсор
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Берем текущий угол наклона камеры при старте (обычно 0)
+        if (cameraPivot != null)
+            xRotation = cameraPivot.localEulerAngles.x;
     }
 
     void Update()
     {
-        // На паузе остановка камеры
+        // Если игра на паузе (или меню) - не крутим камеру
         if (Time.timeScale == 0f) return;
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Наклон камеры вверх-вниз
+        // 1. Вычитаем движение мыши по Y (чтобы мышь вверх поднимала взгляд)
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, minPitch, maxPitch);
-        cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        // Поворот тела влево-вправо
-        playerBody.Rotate(Vector3.up * mouseX);
+        // 2. ЖЕСТКО ограничиваем угол (это защищает от переворота)
+        xRotation = Mathf.Clamp(xRotation, minPitch, maxPitch);
+
+        // 3. Применяем наклон ТОЛЬКО к CameraPivot (по оси X)
+        if (cameraPivot != null)
+            cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        // 4. Вращаем ТЕЛО игрока по оси Y (влево-вправо)
+        if (playerBody != null)
+            playerBody.Rotate(Vector3.up * mouseX);
     }
 }

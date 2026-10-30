@@ -17,6 +17,7 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver()) return;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused) Resume();
@@ -44,12 +45,13 @@ public class PauseManager : MonoBehaviour
         if (mouseLook) mouseLook.enabled = true;
     }
 
-    public void QuitGame()
+    public void BackToMainMenu()
     {
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
+        // Обязательно возвращаем нормальное время!
+        // Если этого не сделать, главное меню загрузится с timeScale = 0, и кнопки там не будут работать.
+        Time.timeScale = 1f;
+
+        // Загружаем сцену главного меню (убедись, что имя точно совпадает)
+        SceneManager.LoadScene("MenuScene");
     }
 }
