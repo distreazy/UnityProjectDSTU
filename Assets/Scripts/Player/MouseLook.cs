@@ -19,7 +19,6 @@ public class MouseLook : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Берем текущий угол наклона камеры при старте (обычно 0)
         if (cameraPivot != null)
             xRotation = cameraPivot.localEulerAngles.x;
     }
@@ -32,17 +31,17 @@ public class MouseLook : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // 1. Вычитаем движение мыши по Y (чтобы мышь вверх поднимала взгляд)
+        // Вычитаем движение мыши по Y
         xRotation -= mouseY;
 
-        // 2. ЖЕСТКО ограничиваем угол (это защищает от переворота)
+        // ограничиваем угол
         xRotation = Mathf.Clamp(xRotation, minPitch, maxPitch);
 
-        // 3. Применяем наклон ТОЛЬКО к CameraPivot (по оси X)
+        // Применяем наклон ТОЛЬКО к CameraPivot
         if (cameraPivot != null)
             cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        // 4. Вращаем ТЕЛО игрока по оси Y (влево-вправо)
+        // Вращаем ТЕЛО игрока по оси Y
         if (playerBody != null)
             playerBody.Rotate(Vector3.up * mouseX);
     }

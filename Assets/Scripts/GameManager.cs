@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // Нужно для работы с текстом
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance; // Синглтон, чтобы враги могли легко его найти
+    public static GameManager Instance;
 
     [Header("Цели")]
     public int killsToWin = 15;
@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // Настраиваем Синглтон
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
@@ -31,7 +30,7 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         currentKills = 0;
         UpdateKillsUI();
-        endGamePanel.SetActive(false); // Скрываем экран конца игры
+        endGamePanel.SetActive(false);
     }
 
     void Update()
@@ -68,12 +67,11 @@ public class GameManager : MonoBehaviour
     void WinGame()
     {
         isGameOver = true;
-        Time.timeScale = 0f; // Останавливаем игру
+        Time.timeScale = 0f;
         endGamePanel.SetActive(true);
         endGameText.text = "VICTORY";
         endGameText.color = Color.green;
 
-        // Освобождаем курсор
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -81,36 +79,28 @@ public class GameManager : MonoBehaviour
     void LoseGame()
     {
         isGameOver = true;
-        Time.timeScale = 0f; // Останавливаем игру
+        Time.timeScale = 0f;
         endGamePanel.SetActive(true);
         endGameText.text = "YOU LOOSE";
         endGameText.color = Color.red;
 
-        // Освобождаем курсор
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
-    // Метод для кнопки перезапуска
     public void RestartGame()
     {
-        Time.timeScale = 1f; // Обязательно возвращаем время!
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Перезагружаем текущую сцену
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // Метод для кнопки выхода в главное меню
     public void GoToMainMenu()
     {
-        // Обязательно возвращаем время в нормальное состояние!
-        // Иначе главное меню загрузится с замороженным временем (timeScale = 0)
         Time.timeScale = 1f;
 
-        // Загружаем сцену главного меню. 
-        // Убедись, что сцена называется именно "MainMenu"
         SceneManager.LoadScene("MenuScene");
     }
 
-    // Этот метод нужен, чтобы другие скрипты могли узнать, закончилась ли игра
     public bool IsGameOver()
     {
         return isGameOver;

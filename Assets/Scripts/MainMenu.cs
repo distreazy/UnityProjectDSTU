@@ -8,7 +8,6 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        // Меню активно
         if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
 
         Cursor.lockState = CursorLockMode.None;

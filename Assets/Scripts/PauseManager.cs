@@ -47,11 +47,8 @@ public class PauseManager : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        // Обязательно возвращаем нормальное время!
-        // Если этого не сделать, главное меню загрузится с timeScale = 0, и кнопки там не будут работать.
         Time.timeScale = 1f;
 
-        // Загружаем сцену главного меню (убедись, что имя точно совпадает)
         SceneManager.LoadScene("MenuScene");
     }
 }

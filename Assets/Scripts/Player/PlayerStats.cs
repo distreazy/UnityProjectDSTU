@@ -7,10 +7,10 @@ public class PlayerStats : MonoBehaviour
     public float maxHealth = 100f;
     private float currentHealth;
 
-    [Header("Health Regen")] // НОВОЕ
-    public float healthRegenPerSecond = 10f; // Сколько ХП восстанавливается в секунду
-    public float healthRegenDelay = 5f;      // Через сколько секунд после урона начнется реген
-    private float healthRegenTimer = 0f;     // Таймер, который считает время до регена
+    [Header("Health Regen")]
+    public float healthRegenPerSecond = 10f;
+    public float healthRegenDelay = 5f;
+    private float healthRegenTimer = 0f;
 
     [Header("Stamina")]
     public float maxStamina = 100f;
@@ -39,24 +39,19 @@ public class PlayerStats : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
 
-        // --- ЛОГИКА РЕГЕНЕРАЦИИ ЗДОРОВЬЯ ---
         if (currentHealth < maxHealth)
         {
             if (healthRegenTimer > 0f)
             {
-                // Если таймер еще тикает (мы недавно получали урон) — уменьшаем его
                 healthRegenTimer -= Time.deltaTime;
             }
             else
             {
-                // Если таймер дошел до нуля — регенерируем ХП
                 currentHealth = Mathf.Clamp(currentHealth + healthRegenPerSecond * Time.deltaTime, 0f, maxHealth);
-                UpdateUI(); // Обновляем полоску на экране
+                UpdateUI();
             }
         }
-        // -----------------------------------
 
-        // --- СТАРАЯ ЛОГИКА СТАМИНЫ ---
         if (staminaRegenTimer > 0f)
             staminaRegenTimer -= Time.deltaTime;
 
@@ -67,13 +62,16 @@ public class PlayerStats : MonoBehaviour
     {
         currentHealth = Mathf.Clamp(currentHealth - dmg, 0f, maxHealth);
 
-        // НОВОЕ: При получении урона сбрасываем таймер регена
+        // При получении урона сбрасываем таймер регена
         healthRegenTimer = healthRegenDelay;
 
         UpdateUI();
 
         if (currentHealth <= 0f)
             Die();
+
+        PlayerAudio pAudio = GetComponent<PlayerAudio>();
+        if (pAudio != null) pAudio.PlayHurtSound();
     }
 
     public void Heal(float amount)
@@ -88,8 +86,6 @@ public class PlayerStats : MonoBehaviour
         staminaRegenTimer = regenDelay;
     }
 
-    // Этот метод пытается потратить стамину (для прыжка). 
-    // Если стамины хватает — тратит и возвращает true. Если нет — возвращает false.
     public bool TrySpendStamina(float amount)
     {
         if (currentStamina < amount)
@@ -121,6 +117,5 @@ public class PlayerStats : MonoBehaviour
     void Die()
     {
         Debug.Log("Player died");
-        // (Смерть обрабатывается через GameManager, который следит за CurrentHealth)
     }
 }

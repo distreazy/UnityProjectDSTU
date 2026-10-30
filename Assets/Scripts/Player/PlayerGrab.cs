@@ -3,13 +3,13 @@ using UnityEngine;
 public class PlayerGrab : MonoBehaviour
 {
     [Header("Настройки захвата")]
-    public float grabDistance = 4f;      // Максимальное расстояние до ящика
-    public float holdDistance = 2.5f;    // На каком расстоянии держать перед камерой
-    public float grabForce = 15f;        // Сила притягивания к точке удержания
-    public LayerMask boxLayer;           // Слой, на котором лежат ящики
+    public float grabDistance = 4f;
+    public float holdDistance = 2.5f;
+    public float grabForce = 15f;
+    public LayerMask boxLayer;
 
     [Header("Ссылки")]
-    public Camera playerCamera;          // Ссылка на камеру
+    public Camera playerCamera;
 
     private GameObject heldObject;
     private Rigidbody heldRb;
@@ -20,10 +20,10 @@ public class PlayerGrab : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (heldObject == null) TryGrab();
-            else Release(); // Просто отпускаем (без импульса)
+            else Release();
         }
 
-        // Бросок на ЛКМ (только если предмет в руках)
+        // Бросок на ЛКМ
         if (Input.GetMouseButtonDown(0) && heldObject != null)
         {
             Throw();
@@ -37,7 +37,6 @@ public class PlayerGrab : MonoBehaviour
             Vector3 targetPosition = playerCamera.transform.position + playerCamera.transform.forward * holdDistance;
             Vector3 direction = targetPosition - heldObject.transform.position;
 
-            // ВАЖНО: используем linearVelocity для Unity 6
             heldRb.linearVelocity = direction * grabForce;
 
             heldRb.angularVelocity = Vector3.zero;
@@ -55,7 +54,7 @@ public class PlayerGrab : MonoBehaviour
                 heldObject = hit.rigidbody.gameObject;
                 heldRb = hit.rigidbody;
 
-                // Чтобы ящик не сбивал с ног игрока (CharacterController), временно отключаем коллизию с игроком
+                // временно отключаем коллизию с игроком
                 Physics.IgnoreCollision(heldObject.GetComponent<Collider>(), GetComponent<Collider>(), true);
 
                 // Включаем интерполяцию для плавности
@@ -81,21 +80,22 @@ public class PlayerGrab : MonoBehaviour
     {
         if (heldObject != null)
         {
-            // 1. Запоминаем объект и его Rigidbody ДО того, как отпустим
+            // Запоминаем объект и его Rigidbody до того, как отпустим
             GameObject objToThrow = heldObject;
             Rigidbody rbToThrow = heldRb;
 
-            // 2. Отпускаем (возвращаем коллизии и очищаем переменные)
+            // Отпускаем
             Release();
 
-            // 3. Применяем силу к сохраненному Rigidbody
+            // Применяем силу к сохраненному Rigidbody
             Vector3 throwDirection = playerCamera.transform.forward;
 
-            // Сила броска (настрой в инспекторе под себя, сейчас 15)
+            // Сила броска
             float throwForce = 50f;
 
-            // Чтобы тяжелые ящики кидались хуже, делим силу на массу (опционально)
-            // Если хочешь, чтобы все кидались одинаково, убери деление на rbToThrow.mass
+            BoxDamage boxDamage = objToThrow.GetComponent<BoxDamage>();
+            if (boxDamage != null) boxDamage.PlayThrowSound();
+
             rbToThrow.AddForce(throwDirection * throwForce, ForceMode.Impulse);
         }
     }

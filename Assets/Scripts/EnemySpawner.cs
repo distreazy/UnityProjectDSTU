@@ -7,22 +7,21 @@ public class EnemySpawner : MonoBehaviour
     public GameObject heavyEnemyPrefab;
 
     [Header("Настройки спавна")]
-    public float spawnInterval = 5f; // Раз в 5 секунд
-    public float spawnRadius = 15f;  // Радиус вокруг спавнера
+    public float spawnInterval = 5f;
+    public float spawnRadius = 15f;
 
     void Start()
     {
-        // Запускаем спавн с задержкой
         InvokeRepeating(nameof(SpawnEnemy), 2f, spawnInterval);
     }
 
     void SpawnEnemy()
     {
-        // Выбираем случайную точку на NavMesh вокруг спавнера
+        // Выбираем случайную точку вокруг спавнера
         Vector3 randomPoint = GetRandomSpawnPoint();
         if (randomPoint == Vector3.zero) return;
 
-        // 20% шанс заспавнить тяжеловеса, 80% - обычного
+        // 20% шанс заспавнить тяжеловеса
         GameObject enemyToSpawn = Random.value > 0.8f ? heavyEnemyPrefab : normalEnemyPrefab;
 
         if (enemyToSpawn != null)
@@ -37,7 +36,7 @@ public class EnemySpawner : MonoBehaviour
         randomDirection += transform.position;
 
         UnityEngine.AI.NavMeshHit hit;
-        // Ищем ближайшую точку на сетке NavMesh
+
         if (UnityEngine.AI.NavMesh.SamplePosition(randomDirection, out hit, spawnRadius, UnityEngine.AI.NavMesh.AllAreas))
         {
             return hit.position;
