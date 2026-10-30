@@ -38,8 +38,10 @@ public class BoxDamage : MonoBehaviour
             float speed = collision.relativeVelocity.magnitude;
             float damage = speed * damageMultiplier * Weight;
 
+            Vector3 hitDirection = collision.relativeVelocity.normalized;
+
             // Наносим урон
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage, hitDirection);
 
             Debug.Log($"Ящик весом {Weight} врезался на скорости {speed:F1} и нанес {damage:F1} урона!");
 

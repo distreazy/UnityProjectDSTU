@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3332984979238095552}
   - component: {fileID: 1042639947249918219}
   - component: {fileID: 4120613929031166874}
+  - component: {fileID: 6245677142334475141}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -72,7 +73,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 095b09b65cd435f4d812cd83d64628f5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -131,7 +132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446705934175f4048a7f810644855342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHealth: 100
+  enemyRenderer: {fileID: 0}
+  knockbackForce: 5
+  maxHealth: 250
+  deathParticles: {fileID: 9067786643367660301, guid: ad23e7131ae09ec4b8950d3d26ecadba, type: 3}
 --- !u!114 &3332984979238095552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +275,33 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!54 &6245677142334475141
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693678015451376843}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2572001785632648771
 GameObject:
   m_ObjectHideFlags: 0

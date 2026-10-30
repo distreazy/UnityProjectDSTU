@@ -10,7 +10,6 @@ public class PlayerController : MonoBehaviour
     public float gravity = -20f;
 
     [Header("Stamina")]
-    [Tooltip("Сколько стамины тратится при беге")]
     public float staminaDrainPerSecond = 20f;
 
     [Header("References")]
@@ -23,52 +22,30 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-
-        if (playerStats == null)
-            playerStats = GetComponent<PlayerStats>();
+        if (playerStats == null) playerStats = GetComponent<PlayerStats>();
     }
 
     void Update()
     {
-        // Если игра на паузе
         if (Time.timeScale == 0f) return;
 
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
-        // Ввод WASD
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 move = transform.right * x + transform.forward * z;
-        // Нормализация вектора чтобы не было бага диагонального бега
         move = Vector3.ClampMagnitude(move, 1f);
 
-        // Проверка бега
         bool wantsToRun = Input.GetKey(KeyCode.LeftShift);
+        // Если стамины нет, мы не можем бежать
         bool canRun = playerStats == null || playerStats.HasStamina;
 
         bool isRunning = wantsToRun && canRun && move.sqrMagnitude > 0.01f;
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-        // Движение
-        controller.Move(move * currentSpeed * Time.deltaTime);
-
-        // Прыжок 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            bool canJump = playerStats == null ||
-                        playerStats.TrySpendStamina(playerStats.jumpStaminaCost);
-
-            if (canJump)
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-
-        // Гравитация
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        // Тратим стамину при беге
+        // Сначала обновляем стамину 
         if (playerStats != null)
         {
             if (isRunning)
@@ -76,5 +53,20 @@ public class PlayerController : MonoBehaviour
             else
                 playerStats.RegenerateStamina(Time.deltaTime);
         }
+
+        // Прыжок
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            bool canJump = playerStats == null || playerStats.TrySpendStamina(playerStats.jumpStaminaCost);
+            if (canJump)
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+
+        // Движение
+        controller.Move(move * currentSpeed * Time.deltaTime);
+
+        // Гравитация
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 }

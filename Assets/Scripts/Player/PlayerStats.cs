@@ -24,7 +24,7 @@ public class PlayerStats : MonoBehaviour
     public Image healthFill;
     public Image staminaFill;
 
-    public bool HasStamina => currentStamina > 0f;
+    public bool HasStamina => currentStamina > 5f;
     public float CurrentHealth => currentHealth;
     public float CurrentStamina => currentStamina;
 
@@ -39,12 +39,11 @@ public class PlayerStats : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
 
+        // Логика регена здоровья
         if (currentHealth < maxHealth)
         {
             if (healthRegenTimer > 0f)
-            {
                 healthRegenTimer -= Time.deltaTime;
-            }
             else
             {
                 currentHealth = Mathf.Clamp(currentHealth + healthRegenPerSecond * Time.deltaTime, 0f, maxHealth);
@@ -52,66 +51,59 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
+        // Логика регена стамины
         if (staminaRegenTimer > 0f)
+        {
             staminaRegenTimer -= Time.deltaTime;
-
-        UpdateUI();
+        }
+        else if (currentStamina < maxStamina)
+        {
+            currentStamina = Mathf.Clamp(currentStamina + staminaRegenPerSecond * Time.deltaTime, 0f, maxStamina);
+            UpdateUI();
+        }
     }
 
     public void TakeDamage(float dmg)
     {
         currentHealth = Mathf.Clamp(currentHealth - dmg, 0f, maxHealth);
-
-        // При получении урона сбрасываем таймер регена
         healthRegenTimer = healthRegenDelay;
-
         UpdateUI();
 
-        if (currentHealth <= 0f)
-            Die();
+        if (currentHealth <= 0f) Die();
 
         PlayerAudio pAudio = GetComponent<PlayerAudio>();
         if (pAudio != null) pAudio.PlayHurtSound();
-    }
 
-    public void Heal(float amount)
-    {
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
-        UpdateUI();
+        if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.3f, 0.2f);
     }
 
     public void DrainStamina(float amount)
     {
         currentStamina = Mathf.Clamp(currentStamina - amount, 0f, maxStamina);
         staminaRegenTimer = regenDelay;
+        UpdateUI();
     }
 
     public bool TrySpendStamina(float amount)
     {
         if (currentStamina < amount)
-            return false; // Не хватает стамины
+            return false;
 
         currentStamina -= amount;
-        staminaRegenTimer = regenDelay; // Сбрасываем таймер восстановления
+        staminaRegenTimer = regenDelay;
         UpdateUI();
         return true;
     }
 
     public void RegenerateStamina(float deltaTime)
     {
-        if (staminaRegenTimer > 0f) return;
-        currentStamina = Mathf.Clamp(
-            currentStamina + staminaRegenPerSecond * deltaTime,
-            0f, maxStamina);
+
     }
 
     void UpdateUI()
     {
-        if (healthFill != null)
-            healthFill.fillAmount = currentHealth / maxHealth;
-
-        if (staminaFill != null)
-            staminaFill.fillAmount = currentStamina / maxStamina;
+        if (healthFill != null) healthFill.fillAmount = currentHealth / maxHealth;
+        if (staminaFill != null) staminaFill.fillAmount = currentStamina / maxStamina;
     }
 
     void Die()

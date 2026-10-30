@@ -97,6 +97,8 @@ public class PlayerGrab : MonoBehaviour
             if (boxDamage != null) boxDamage.PlayThrowSound();
 
             rbToThrow.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+
+            if (CameraShake.Instance != null) CameraShake.Instance.Shake(0.2f, 0.15f);
         }
     }
 }
